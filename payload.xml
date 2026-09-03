@@ -1,0 +1,5 @@
+<UserInfoSearchCond version="1.0" xmlns="http://www.hikvision.com/ver10/XMLSchema">
+    <searchID>1</searchID>
+    <maxResults>100</maxResults>
+    <searchResultPosition>0</searchResultPosition>
+</UserInfoSearchCond>

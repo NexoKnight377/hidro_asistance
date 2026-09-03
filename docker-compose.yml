@@ -1,0 +1,49 @@
+# Sin clave `version:` (obsoleta en Compose v2).
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: asistencias_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: asistencias
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d asistencias"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: asistencias_web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Única fuente de verdad de la conexión en runtime
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/asistencias
+      TZ: America/Caracas
+      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-10}
+      ISAPI_TIMEOUT_MS: ${ISAPI_TIMEOUT_MS:-8000}
+      ISAPI_SIMULATE: "false"
+      HIK_DEFAULT_USER: ${HIK_DEFAULT_USER:-admin}
+      HIK_DEFAULT_PASS: ${HIK_DEFAULT_PASS:-Hidro171273}
+      HIK_DEVICES: '[{"ip": "192.168.0.136", "username": "admin", "password": "Hidro171273"}]'
+    ports:
+      - "3001:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+    restart: unless-stopped
+
+volumes:
+  pgdata:

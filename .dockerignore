@@ -1,0 +1,32 @@
+# dependencias y artefactos locales
+node_modules
+npm-debug.log*
+.next
+out
+build
+
+# repo
+.git
+.gitignore
+
+# secretos: NUNCA dentro de la imagen; el runtime los recibe por compose
+.env
+.env.*
+!.env.example
+
+# docker (no hacen falta en el contexto de build)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# editor / SO
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# docs y capturas
+*.md
+!README.md
+*.png
+*.jpg
